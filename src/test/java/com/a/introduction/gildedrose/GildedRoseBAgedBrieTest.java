@@ -1,41 +1,48 @@
 package com.a.introduction.gildedrose;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GildedRoseBAgedBrieTest {
 
+	private static final String AGED_BRIE = "Aged Brie";
+	private static final int INITIAL_SELLIN = 4;
+	private static final int INITIAL_QUALITY = 3;
+	private static final int MAX_QUALITY = 50;
+	private static final int EXPIRED_SELLIN = -1;
+
 	@Test
 	public void testUpdateQualityAgedBrie1() {
-		Item item = new Item("Aged Brie", 4, 3);
-		Item[] items = new Item[] { item };
-		GildedRose app = new GildedRose(items);
-		app.updateQuality();
-		assertEquals("Aged Brie", app.items[0].name);
-		assertEquals(3, app.items[0].sellIn);
-		assertEquals(4, app.items[0].quality);
+		GildedRose app = createGildedRoseApp(AGED_BRIE, INITIAL_SELLIN, INITIAL_QUALITY);
+		Item expectedItem = new Item(AGED_BRIE, INITIAL_SELLIN - 1, INITIAL_QUALITY + 1);
+		assertItems(app.items[0], expectedItem);
 	}
 
 	@Test
 	public void testUpdateQualityAgedBrie2() {
-		Item item = new Item("Aged Brie", -1, 3);
-		Item[] items = new Item[] { item };
-		GildedRose app = new GildedRose(items);
-		app.updateQuality();
-		assertEquals("Aged Brie", app.items[0].name);
-		assertEquals(-2, app.items[0].sellIn);
-		assertEquals(5, app.items[0].quality);
+		GildedRose app = createGildedRoseApp(AGED_BRIE, EXPIRED_SELLIN, INITIAL_QUALITY);
+		Item expectedItem = new Item(AGED_BRIE, EXPIRED_SELLIN - 1, INITIAL_QUALITY + 2);
+		assertItems(app.items[0], expectedItem);
 	}
 
 	@Test
 	public void testUpdateQualityAgedBrie3() {
-		Item item = new Item("Aged Brie", 4, 50);
-		Item[] items = new Item[] { item };
-		GildedRose app = new GildedRose(items);
+		GildedRose app = createGildedRoseApp(AGED_BRIE, INITIAL_SELLIN, MAX_QUALITY);
+		Item expectedItem = new Item(AGED_BRIE, INITIAL_SELLIN - 1, MAX_QUALITY);
+		assertItems(app.items[0], expectedItem);
+	}
+
+	private GildedRose createGildedRoseApp(String name, int sellIn, int quality) {
+		Item item = new Item(name, sellIn, quality);
+		GildedRose app = new GildedRose(new Item[] { item });
 		app.updateQuality();
-		assertEquals("Aged Brie", app.items[0].name);
-		assertEquals(3, app.items[0].sellIn);
-		assertEquals(50, app.items[0].quality);
+		return app;
+	}
+
+	private static void assertItems(Item expected, Item actual) {
+		assertEquals(expected.name, actual.name);
+		assertEquals(expected.sellIn, actual.sellIn);
+		assertEquals(expected.quality, actual.quality);
 	}
 }
