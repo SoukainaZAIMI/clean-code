@@ -1,12 +1,18 @@
 package com.b.simple.design.business.student;
 public class StudentHelper {
 
-	/* PROBLEM 1 */	
+	public static final int GRADEB_LOWER_LIMIT = 51;
+	public static final int GRADEB_UPPER_LIMIT = 80;
+	public static final int EXTRA_MATH = 10;
+
+	/* PROBLEM 1 */
 	/*
 	* You get a grade B if marks are between 51 and 80 (both inclusive). Except for Maths where the upper limit is increased by 10.
 	*/
 	public boolean isGradeB(int marks, boolean isMaths) {
-		return isMaths ? marks>=51 && marks<=90 : marks>=51 && marks<=80; 
+		int extraLimit = isMaths ? EXTRA_MATH : 0;
+		int upperLimit = GRADEB_UPPER_LIMIT + extraLimit;
+		return marks>= GRADEB_LOWER_LIMIT && marks<= upperLimit;
 	}
 
 	/* PROBLEM 2 */
@@ -17,27 +23,13 @@ public class StudentHelper {
 	*/
 
 	public String getGrade(int mark, boolean isMaths) {
-		String grade = "C";
-		
-		if (isGradeA(mark, isMaths))
-			grade = "A";
-		else if (isBGrade(mark, isMaths)) {
-			grade = "B";
-		}
-		return grade;
+		int extraLimit = isMaths ? 5 : 0;
+
+		if (mark >= 91 + extraLimit) return "A";
+		if (mark >= 51 + extraLimit) return "B";
+		return "C";
 	}
 
-	private boolean isGradeA(int mark, boolean isMaths) {
-		int lowerLimitForAGrade = isMaths ? 95
-				: 90;
-		return mark > lowerLimitForAGrade;
-	}
-
-	private boolean isBGrade(int mark, boolean isMaths) {
-		int lowerLimitGradeB = isMaths ? 55
-				: 50;
-		return mark > lowerLimitGradeB && mark < 90;
-	}
 
     /*  PROBLEM 3
      * You and your Friend are planning to enter a Subject Quiz.
@@ -54,13 +46,25 @@ public class StudentHelper {
      * marks1 - your marks
      * marks2 - your friends marks
     */
-        
-    public String willQualifyForQuiz(int marks1, int marks2, boolean isMaths) {
-        if ((isMaths ? marks1 <= 25 : marks1 <= 20)
-                || (isMaths ? marks2 <= 25 : marks2 <= 20)) return "NO";
-        if ((isMaths ? marks1 >= 85 : marks1 >= 80)
-                || (isMaths ? marks2 >= 85 : marks2 >= 80)) return "YES";
-        return "MAYBE";
-    }	
+
+	public String willQualifyForQuiz(int marks1, int marks2, boolean isMaths) {
+		if (isNotGood(marks1, isMaths) || isNotGood(marks2, isMaths)) {
+			return "NO";
+		}
+		if (isGood(marks1, isMaths) || isGood(marks2, isMaths)) {
+			return "YES";
+		}
+		return "MAYBE";
+	}
+
+	private boolean isNotGood(int marks, boolean isMaths) {
+		int notGoodLimit = isMaths ? 25 : 20;
+		return marks <= notGoodLimit;
+	}
+
+	private boolean isGood(int marks, boolean isMaths) {
+		int goodLimit = isMaths ? 85 : 80;
+		return marks >= goodLimit;
+	}
 
 }
